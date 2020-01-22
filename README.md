@@ -1,44 +1,182 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## From create-react-app to PWA
 
-## Available Scripts
+### From console to web app
 
-In the project directory, you can run:
+Create project, do not forget add ```--template typescript``` at the end.
+````
+npx create-react-app pwa-react-typescript --template typescript
+````
 
-### `npm start`
+This builds a React web app built with TypeScript. It can be tested locally with.
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+````
+cd pwa-react-typescript
+yarn start
+````
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+Open the file ``ìndex.tsx``` in your created project:
 
-### `npm test`
+````
+serviceWorker.unregister();
+````
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Swap ```serviceWorker.unregister()```for ```serviceWorker.register()```and now you have a PWA.
 
-### `npm run build`
+Now add react-router, the de facto routing solution for React and the required type definitions for TypeScript:
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```
+yarn add react-router-dom @types/react-router-dom
+```
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+Create file ```Routes.tsx``` in ```/src``` folder, with this config:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```javascript
+import React from 'react';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import Home from './pages/Home';
+import About from './pages/About';
+import Navbar from './components/Navbar';
 
-### `npm run eject`
+const Routes: React.FC = () => {
+	return (
+		<Router>
+			<Navbar />
+			<Switch>
+				<Route exact path="/" component={Home} />
+				<Route path="/about" component={About} />
+			</Switch>
+		</Router>
+	);
+};
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+export default Routes;
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Add this file ```Routes.tsx``` to ```App.tsx```
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+```javascript
+import React from 'react';
+import Routes from './Routes';
 
-## Learn More
+const App: React.FC = () => {
+	return (
+			<Routes />
+	);
+};
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+export default App;
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Create components ```Home``` and ```About``` in ```/src/pages``` folder, like this:
+
+```javascript
+import React from 'react';
+
+const Home: React.FC = () => {
+	return (
+		<div>
+			Home Page
+		</div>
+	);
+};
+
+export default Home;
+```
+
+```Home.tsx``` 
+
+
+```javascript
+import React from 'react';
+
+const About: React.FC = () => {
+	return (
+		<div>
+			About Page
+		</div>
+	);
+};
+
+export default About;
+```
+
+```About.tsx``` 
+
+
+Replace the ```App.test.tsx``` with this:
+
+```javascript
+import React from 'react';
+import { render } from '@testing-library/react';
+import App from './App';
+
+test('renders learn react link', () => {
+	const { getByText } = render(<App />);
+	const linkElement = getByText(/about/i);
+	expect(linkElement).toBeInTheDocument();
+});
+
+```
+
+### Code splitting
+
+Going to change ```Routes.tsx```
+Where previously had:
+
+```javascript
+import About from "./components/About"
+import Home from  "./components/Home"
+```
+
+Let's replace it with:
+
+```javascript
+const About = lazy(() => import('./components/About'))
+const Home = lazy(() => import('./components/Home'))
+```
+remenber import ```lazy``` from react if not auto-import
+
+
+Add ```<Suspense>``` component inside our ```<Router>``` component, like this:
+Wrapped ```<Switch>``` and ```<Route>``` components
+
+```javascript
+<Router>
+	<Suspense fallback={<div>Loading...</div>}>
+	{/*...*/}
+	</Suspense>
+</Router>
+```
+
+
+Too remenber import ```Suspense``` from react if not auto-import
+
+```Routes.tsx``` be look like this:
+
+```javascript
+import React, { Suspense, lazy } from 'react';
+import RotateCircleLoading from 'react-loading';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import Navbar from './components/Navbar';
+const Home = lazy(() => import('./pages/Home'));
+const About = lazy(() => import('./pages/About'));
+
+const Routes: React.FC = () => {
+	return (
+		<Router>
+			<Suspense fallback={<RotateCircleLoading />}>
+				<Switch>
+					<Route exact path="/" component={Home} />
+					<Route path="/about" component={About} />
+				</Switch>
+				<Navbar />
+			</Suspense>
+		</Router>
+	);
+};
+
+export default Routes;
+
+```
+
