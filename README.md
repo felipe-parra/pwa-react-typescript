@@ -14,7 +14,7 @@ cd pwa-react-typescript
 yarn start
 ````
 
-Open the file ``ìndex.tsx``` in your created project:
+Open the file ```index.tsx``` in your created project:
 
 ````
 serviceWorker.unregister();
@@ -30,7 +30,7 @@ yarn add react-router-dom @types/react-router-dom
 
 Create file ```Routes.tsx``` in ```/src``` folder, with this config:
 
-```javascript
+```typescript
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Home from './pages/Home';
@@ -55,7 +55,7 @@ export default Routes;
 
 Add this file ```Routes.tsx``` to ```App.tsx```
 
-```javascript
+```typescript
 import React from 'react';
 import Routes from './Routes';
 
@@ -70,7 +70,7 @@ export default App;
 
 Create components ```Home``` and ```About``` in ```/src/pages``` folder, like this:
 
-```javascript
+```typescript
 import React from 'react';
 
 const Home: React.FC = () => {
@@ -87,7 +87,7 @@ export default Home;
 ```Home.tsx``` 
 
 
-```javascript
+```typescript
 import React from 'react';
 
 const About: React.FC = () => {
@@ -106,7 +106,7 @@ export default About;
 
 Replace the ```App.test.tsx``` with this:
 
-```javascript
+```typescript
 import React from 'react';
 import { render } from '@testing-library/react';
 import App from './App';
@@ -124,7 +124,7 @@ test('renders learn react link', () => {
 Going to change ```Routes.tsx```
 Where previously had:
 
-```javascript
+```typescript
 import About from "./components/About"
 import Home from  "./components/Home"
 ```
@@ -154,7 +154,7 @@ Too remenber import ```Suspense``` from react if not auto-import
 
 ```Routes.tsx``` be look like this:
 
-```javascript
+```typescript
 import React, { Suspense, lazy } from 'react';
 import RotateCircleLoading from 'react-loading';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';

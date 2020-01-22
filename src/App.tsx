@@ -5,7 +5,7 @@ import { Grid } from '@material-ui/core';
 
 const App: React.FC = () => {
 	return (
-		<Grid container spacing={3}>
+		<Grid container spacing={2}>
 			<Routes />
 		</Grid>
 	);
